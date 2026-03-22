@@ -1,38 +1,37 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
+
     <meta charset="UTF-8">
-    <title>Task Manager</title>
+    <title>Lab2 Form</title>
 
     <link rel="stylesheet" href="style.css">
 
 </head>
 <body>
 
-<h1>Менеджер завдань</h1>
-
-<div class="form">
-
-    <input id="taskInput" type="text" placeholder="Завдання">
-
-    <input id="deadlineInput" type="date">
-
-    <button id="addBtn">Додати</button>
-
-</div>
+<h1>Динамічна форма</h1>
 
 
-<div class="search">
+<select id="typeSelect">
 
-    <input id="searchInput" type="text" placeholder="Пошук">
-    <button id="sortBtn">Сортувати за датою</button>
+    <option value="password">Password</option>
+    <option value="date">Date</option>
+    <option value="time">Time</option>
+    <option value="number">Integer</option>
+    <option value="float">Float</option>
+    <option value="phone">Phone</option>
+    <option value="url">URL</option>
 
-</div>
+</select>
 
 
-<ul id="taskList">
+<button id="addBtn">
+    Додати поле
+</button>
 
-</ul>
+
+<div id="formArea"></div>
 
 
 <script src="script.js"></script>

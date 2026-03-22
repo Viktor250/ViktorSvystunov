@@ -1,375 +1,376 @@
-class Task {
-
-    constructor(text, deadline, done = false) {
-
-        this.text = text
-        this.deadline = deadline
-        this.done = done
-
-    }
-
-}
-
-
-
-class TaskManager {
-
-    constructor() {
-
-        this.tasks =
-            JSON.parse(
-                localStorage.getItem("tasks")
-            ) || []
-
-    }
-
-    save() {
-
-        localStorage.setItem(
-            "tasks",
-            JSON.stringify(this.tasks)
-        )
-
-    }
-
-    add(task) {
-
-        this.tasks.push(task)
-
-        this.save()
-
-    }
-
-    delete(index) {
-
-        this.tasks.splice(index, 1)
-
-        this.save()
-
-    }
-
-    toggle(index) {
-
-        this.tasks[index].done =
-            !this.tasks[index].done
-
-        this.save()
-
-    }
-
-    edit(index, newText, newDate) {
-
-        this.tasks[index].text = newText
-        this.tasks[index].deadline = newDate
-
-        this.save()
-
-    }
-
-    search(text) {
-
-        return this.tasks.filter(t =>
-            t.text
-                .toLowerCase()
-                .includes(text.toLowerCase())
-        )
-
-    }
-
-    sortAll() {
-
-        this.tasks.sort((a, b) => {
-
-            if (a.done && !b.done) return 1
-            if (!a.done && b.done) return -1
-
-            if (!a.deadline) return 1
-            if (!b.deadline) return -1
-
-            return new Date(a.deadline) -
-                   new Date(b.deadline)
-
-        })
-
-        this.save()
-
-    }
-
-}
-
-
-
-const manager =
-    new TaskManager()
-
-
-
-const input =
-    document.getElementById("taskInput")
-
-const deadline =
-    document.getElementById("deadlineInput")
-
-const list =
-    document.getElementById("taskList")
-
-const searchInput =
-    document.getElementById("searchInput")
-
-const addBtn =
-    document.getElementById("addBtn")
-
-const sortBtn =
-    document.getElementById("sortBtn")
-
-
-
-function render(tasks = manager.tasks) {
-
-    list.innerHTML = ""
-
-    tasks.forEach((t, i) => {
-
-        const li =
-            document.createElement("li")
-
-        const textSpan =
-            document.createElement("span")
-
-        let text = t.text
-
-        if (t.deadline) {
-
-            text += " | " + t.deadline
-
-            const now = new Date()
-            const d = new Date(t.deadline)
-
-            const nowDate =
-                new Date(
-                    now.getFullYear(),
-                    now.getMonth(),
-                    now.getDate()
-                )
-
-            const taskDate =
-                new Date(
-                    d.getFullYear(),
-                    d.getMonth(),
-                    d.getDate()
-                )
-
-            const diffTime =
-                taskDate - nowDate
-
-            const diffDays =
-                Math.round(
-                    diffTime /
-                    (1000 * 60 * 60 * 24)
-                )
-
-            if (diffDays > 1) {
-
-                text +=
-                    " | " +
-                    diffDays +
-                    " днів"
-
-            }
-
-            else if (diffDays === 1) {
-
-                text += " | завтра"
-
-            }
-
-            else if (diffDays === 0) {
-
-                text += " | сьогодні"
-
-            }
-
-            else if (diffDays === -1) {
-
-                text += " | вчора"
-
-                li.style.background =
-                    "#ffcccc"
-
-            }
-
-            else if (diffDays < -1) {
-
-                text +=
-                    " | " +
-                    Math.abs(diffDays) +
-                    " днів тому"
-
-                li.style.background =
-                    "#ffcccc"
-
-            }
-
-        }
-
-        textSpan.textContent = text
-
-        if (t.done) {
-
-            textSpan.classList.add("done")
-
-        }
-
-
-
-        const btnDiv =
-            document.createElement("div")
-
-        btnDiv.className = "buttons"
-
-
-
-        const doneBtn =
-            document.createElement("button")
-
-        doneBtn.textContent = "✔"
-
-        doneBtn.onclick = () => {
-
-            manager.toggle(i)
-
-            manager.sortAll()
-
-            render()
-
-        }
-
-
-
-        const editBtn =
-            document.createElement("button")
-
-        editBtn.textContent = "Edit"
-
-        editBtn.onclick = () => {
-
-            const newText =
-                prompt(
-                    "Нове завдання",
-                    t.text
-                )
-
-            const newDate =
-                prompt(
-                    "Нова дата",
-                    t.deadline
-                )
-
-            if (newText !== null) {
-
-                manager.edit(
-                    i,
-                    newText,
-                    newDate
-                )
-
-                manager.sortAll()
-
-                render()
-
-            }
-
-        }
-
-
-
-        const delBtn =
-            document.createElement("button")
-
-        delBtn.textContent = "X"
-
-        delBtn.onclick = () => {
-
-            manager.delete(i)
-
-            render()
-
-        }
-
-
-
-        btnDiv.appendChild(doneBtn)
-        btnDiv.appendChild(editBtn)
-        btnDiv.appendChild(delBtn)
-
-
-
-        li.appendChild(textSpan)
-        li.appendChild(btnDiv)
-
-        list.appendChild(li)
-
-    })
-
-}
-
+const typeSelect = document.getElementById("typeSelect")
+const addBtn = document.getElementById("addBtn")
+const formArea = document.getElementById("formArea")
 
 
 addBtn.onclick = () => {
 
-    if (input.value === "")
-        return
+    const type = typeSelect.value
 
-    const task =
-        new Task(
-            input.value,
-            deadline.value
+    const row = document.createElement("div")
+    row.className = "row"
+
+    const label = document.createElement("div")
+    label.textContent = type + ":"
+
+    const input = document.createElement("input")
+    input.type = "text"
+    input.dataset.type = type
+
+    const msg = document.createElement("div")
+    msg.className = "msg"
+
+    row.append(label, input, msg)
+
+
+    if (type === "password") {
+
+        const list = document.createElement("ul")
+
+        list.innerHTML = `
+        <li>Мінімум 6 символів</li>
+        <li>Велика літера</li>
+        <li>Мала літера</li>
+        <li>Цифра</li>
+        <li>Спецсимвол</li>
+        <li>Без пробілів</li>
+        <li>Тільки латиниця</li>
+        `
+
+        row.appendChild(list)
+
+    }
+
+
+    if (type === "phone") {
+
+    input.value = "+38(0"
+
+    setTimeout(() => {
+        input.setSelectionRange(
+            input.value.length,
+            input.value.length
         )
+    })
 
-    manager.add(task)
-
-    manager.sortAll()
-
-    input.value = ""
-    deadline.value = ""
-
-    render()
-
-}
+    }
 
 
+    input.addEventListener("input", formatInput)
+    input.addEventListener("input", validate)
 
-searchInput.oninput = () => {
-
-    const result =
-        manager.search(
-            searchInput.value
-        )
-
-    render(result)
+    formArea.appendChild(row)
 
 }
 
 
 
-sortBtn.onclick = () => {
+function formatInput(e) {
 
-    manager.sortAll()
+    const input = e.target
+    const type = input.dataset.type
 
-    render()
+    let v = input.value
+
+
+    // PHONE
+
+    if (type === "phone") {
+
+        let digits = v.replace(/\D/g, "")
+
+        if (digits.startsWith("38"))
+            digits = digits.slice(2)
+
+        if (digits.startsWith("0"))
+            digits = digits.slice(1)
+
+        digits = digits.slice(0,9)
+
+        let res = "+38(0"
+
+        if (digits.length >= 1)
+            res += digits.slice(0,2)
+
+        if (digits.length >= 2)
+            res = "+38(0" + digits.slice(0,2) + ") "
+
+        if (digits.length >= 3)
+            res = "+38(0" + digits.slice(0,2) + ") " +
+                  digits.slice(2,5)
+
+        if (digits.length >= 5)
+            res = "+38(0" + digits.slice(0,2) + ") " +
+                  digits.slice(2,5) + "-" +
+                  digits.slice(5,7)
+
+        if (digits.length >= 7)
+            res = "+38(0" + digits.slice(0,2) + ") " +
+                  digits.slice(2,5) + "-" +
+                  digits.slice(5,7) + "-" +
+                  digits.slice(7,9)
+
+        input.value = res
+
+    }
+
+
+    // DATE
+
+    if (type === "date") {
+
+        v = v.replace(/\D/g, "")
+        v = v.slice(0,8)
+
+        if (v.length > 4)
+            v =
+                v.slice(0,2)+"/"+
+                v.slice(2,4)+"/"+
+                v.slice(4)
+
+        else if (v.length > 2)
+            v =
+                v.slice(0,2)+"/"+
+                v.slice(2)
+
+        input.value = v
+
+    }
+
+
+    // TIME
+
+    if (type === "time") {
+
+        v = v.replace(/\D/g, "")
+        v = v.slice(0,6)
+
+        if (v.length > 4)
+            v =
+                v.slice(0,2)+":"+
+                v.slice(2,4)+":"+
+                v.slice(4)
+
+        else if (v.length > 2)
+            v =
+                v.slice(0,2)+":"+
+                v.slice(2)
+
+        input.value = v
+
+    }
+
+
+    // INTEGER
+
+    if (type === "number") {
+
+        input.value =
+            v.replace(/[^0-9-]/g, "")
+
+    }
+
+
+    // FLOAT
+
+    if (type === "float") {
+
+        input.value =
+            v.replace(/[^0-9.,-]/g, "")
+
+    }
 
 }
 
 
 
-setInterval(() => {
+function validate(e) {
 
-    render()
+    const input = e.target
+    const type = input.dataset.type
+    const value = input.value
 
-}, 3000)
+    const msg = input.nextSibling
+
+    let ok = true
+    msg.textContent = ""
 
 
+    // PASSWORD
 
-manager.sortAll()
+    if (type === "password") {
 
-render()
+        const li =
+            input.parentNode.querySelectorAll("li")
+
+        const rules = [
+
+            value.length >= 6,
+            /[A-Z]/.test(value),
+            /[a-z]/.test(value),
+            /\d/.test(value),
+            /[!@#$%^&*]/.test(value),
+            !/\s/.test(value),
+            /^[A-Za-z0-9!@#$%^&*]*$/.test(value)
+
+        ]
+
+        rules.forEach((r,i)=>{
+
+            li[i].style.color =
+                r ? "green" : "red"
+
+            if (!r) ok=false
+
+        })
+
+    }
+
+
+    // DATE
+
+    if (type === "date") {
+
+        const r =
+            /^(\d{2})\/(\d{2})\/(\d{4})$/
+
+        const m=value.match(r)
+
+        if (!m) {
+
+            ok=false
+            msg.textContent="dd/mm/yyyy"
+
+        } else {
+
+            const d=+m[1]
+            const mo=+m[2]
+            const y=+m[3]
+
+            const dt =
+                new Date(y,mo-1,d)
+
+            if(
+                dt.getFullYear()!=y||
+                dt.getMonth()!=mo-1||
+                dt.getDate()!=d
+            ){
+
+                ok=false
+                msg.textContent="Нереальна дата"
+
+            }
+
+        }
+
+    }
+
+
+    // TIME
+
+    if (type === "time") {
+
+        const r =
+            /^(\d{2}):(\d{2}):(\d{2})$/
+
+        const m=value.match(r)
+
+        if (!m) {
+
+            ok=false
+            msg.textContent="hh:mm:ss"
+
+        } else {
+
+            const h=+m[1]
+            const mi=+m[2]
+            const s=+m[3]
+
+            if(
+                h>23||
+                mi>59||
+                s>59
+            ){
+
+                ok=false
+                msg.textContent="Нереальний час"
+
+            }
+
+        }
+
+    }
+
+
+    // INT
+
+    if (type === "number") {
+
+        if (!/^-?\d+$/.test(value)) {
+
+            ok=false
+            msg.textContent="Ціле число"
+
+        }
+
+    }
+
+
+    // FLOAT
+
+    if (type === "float") {
+
+        if (!/^-?\d+([.,]\d+)?$/.test(value)) {
+
+            ok=false
+            msg.textContent="Десяткове число"
+
+        }
+
+    }
+
+
+    // PHONE
+
+    if (type === "phone") {
+
+        if (!/^\+38\(0\d{2}\) \d{3}-\d{2}-\d{2}$/.test(value)) {
+
+            ok=false
+            msg.textContent="+38(0__) ___-__-__"
+
+        }
+
+    }
+
+
+    // URL
+
+    if (type === "url") {
+
+        const r =
+        /^(https?:\/\/)([a-z0-9-]+\.)+[a-z]{2,}(\/.*)?$/i
+
+        if (!r.test(value)) {
+
+            ok=false
+            msg.textContent="Невірний URL"
+
+        }
+
+    }
+
+
+    if (ok) {
+
+        input.classList.remove("error")
+        input.classList.add("ok")
+
+    } else {
+
+        input.classList.remove("ok")
+        input.classList.add("error")
+
+    }
+
+}

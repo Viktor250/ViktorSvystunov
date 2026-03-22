@@ -1,74 +1,37 @@
 body {
 
-    font-family: Arial, sans-serif;
-    background: #f0f2f5;
+    font-family: Arial;
     padding: 20px;
 
 }
 
-h1 {
+.row {
 
-    color: darkblue;
-
-}
-
-.form,
-.search {
-
-    margin-bottom: 10px;
+    margin: 8px 0;
 
 }
 
 input {
 
     padding: 5px;
-    margin-right: 5px;
+    margin: 3px;
 
 }
 
-button {
+.error {
 
-    padding: 5px 10px;
-    cursor: pointer;
-
-}
-
-button:hover {
-
-    background: lightblue;
+    border: 2px solid red;
 
 }
 
-ul {
+.ok {
 
-    list-style: none;
-    padding: 0;
-
-}
-
-li {
-
-    background: white;
-    margin: 5px 0;
-    padding: 5px;
-
-    border-radius: 5px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    border: 2px solid green;
 
 }
 
-.done {
+.msg {
 
-    text-decoration: line-through;
-    color: gray;
-
-}
-
-.buttons button {
-
-    margin-left: 5px;
+    font-size: 12px;
 
 }
